@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <title>Tip Calculator</title>
+</head>
+<body class="bg-gray-200 min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden">
+
+        <!-- Header -->
+        <div class="bg-blue-600 px-8 py-6">
+            <h1 class="text-2xl font-bold text-white tracking-wide text-center">
+                Tip Calculator
+            </h1>
+        </div>
+
+        <div class="p-8 flex flex-col gap-6">
+
+            <!-- Bill Amount -->
+            <div class="flex flex-col gap-2">
+                <label class="text-sm font-semibold text-gray-600 tracking-wide">
+                    Bill Amount
+                </label>
+                <div class="relative">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 
+                                 text-gray-400 font-semibold">Rs</span>
+                    <input
+                        id="billAmount"
+                        type="number"
+                        placeholder="0.00"
+                        class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg
+                               text-gray-800 font-semibold text-lg
+                               focus:outline-none focus:ring-2 focus:ring-blue-500
+                               focus:border-transparent transition duration-300"
+                    />
+                </div>
+                <!-- Error -->
+                <p id="billError" class="text-red-500 text-xs hidden">
+                    Please enter a valid bill amount
+                </p>
+            </div>
+
+            <!-- Tip Percentage -->
+            <div class="flex flex-col gap-2">
+                <label class="text-sm font-semibold text-gray-600 tracking-wide">
+                    Tip Percentage
+                </label>
+                <div class="grid grid-cols-4 gap-2">
+                    <button data-tip="10"
+                        class="tipBtn py-3 rounded-lg font-bold text-green-600
+                               border-2 border-blue-500 hover:bg-blue-500
+                               hover:text-white transition duration-300 ease-in-out">
+                        10%
+                    </button>
+                    <button data-tip="15"
+                        class="tipBtn py-3 rounded-lg font-bold text-green-600
+                               border-2 border-blue-500 hover:bg-blue-500
+                               hover:text-white transition duration-300 ease-in-out">
+                        15%
+                    </button>
+                    <button data-tip="20"
+                        class="tipBtn py-3 rounded-lg font-bold text-green-600
+                               border-2 border-blue-500 hover:bg-blue-500
+                               hover:text-white transition duration-300 ease-in-out">
+                        20%
+                    </button>
+                    <button data-tip="25"
+                        class="tipBtn py-3 rounded-lg font-bold text-green-600
+                               border-2 border-blue-500 hover:bg-blue-500
+                               hover:text-white transition duration-300 ease-in-out">
+                        25%
+                    </button>
+                </div>
+                <!-- Error -->
+                <p id="tipError" class="text-red-500 text-xs hidden">
+                    Please select a tip percentage
+                </p>
+            </div>
+
+            <!-- Number of People -->
+            <div class="flex flex-col gap-2">
+                <label class="text-sm font-semibold text-gray-600 tracking-wide">
+                    Split Between
+                </label>
+                <div class="relative">
+                    <span class="absolute right-4 top-1/2 -translate-y-1/2
+                                 text-gray-400 font-semibold text-sm">people</span>
+                    <input
+                        id="peopleNumber"
+                        type="number"
+                        placeholder="1"
+                        min="1"
+                        class="w-full px-4 py-3 pr-20 border border-gray-600 rounded-lg
+                               text-gray-800 font-semibold text-lg
+                               focus:outline-none focus:ring-2 focus:ring-blue-500
+                               focus:border-transparent transition duration-300"
+                    />
+                </div>
+                <!-- Error -->
+                <p id="peopleError" class="text-red-500 text-xs hidden">
+                    Please enter a valid number of people
+                </p>
+            </div>
+
+            <!-- Calculate Button -->
+            <button
+                id="calcBtn"
+                class="w-full bg-blue-600 text-white py-4 rounded-lg font-bold
+                       text-lg hover:bg-blue-700 active:scale-95
+                       transition duration-300 shadow-md hover:shadow-lg">
+                Calculate
+            </button>
+
+            <!-- Results -->
+            <div id="resultDiv"
+                class="hidden flex flex-col gap-4 bg-green-50 rounded-xl p-6 border border-green-200">
+
+                <!-- Tip Amount -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="font-semibold text-gray-700">Tip Amount</p>
+                        <p class="text-xs text-gray-400">Total</p>
+                    </div>
+                    <p id="tipAmount" class="text-2xl font-bold text-green-600">
+                        Rs 0.00
+                    </p>
+                </div>
+
+                <hr class="border-green-200">
+
+                <!-- Total Bill -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="font-semibold text-gray-700">Total Bill</p>
+                        <p class="text-xs text-gray-400">including tip</p>
+                    </div>
+                    <p id="totalBill" class="text-2xl font-bold text-green-600">
+                        Rs 0.00
+                    </p>
+                </div>
+
+                <hr class="border-green-200">
+
+                <!-- Per Person -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="font-semibold text-gray-700">Per Person</p>
+                        <p class="text-xs text-gray-400">total split</p>
+                    </div>
+                    <p id="billPerPerson" class="text-2xl font-bold text-green-600">
+                        Rs 0.00
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- Reset Button -->
+            <button
+                id="resetBtn"
+                class="w-full border-2 border-gray-600 bg-olive-400 text-blue-500 py-3 rounded-lg
+                       font-bold hover:border-red-600 hover:text-blue-600
+                       transition duration-300">
+               <i class="fa-solid fa-rotate-left fa-xl"></i> 
+            </button>
+
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
