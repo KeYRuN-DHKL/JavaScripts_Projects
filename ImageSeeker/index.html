@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Image Search App</title>
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+    <!-- Header -->
+    <div class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="max-w-6xl mx-auto px-4 py-4">
+
+            <!-- Title -->
+            <h1 class="text-2xl font-bold text-gray-800 text-center mb-4">
+                🔍 Image Search
+            </h1>
+
+            <!-- Search Bar -->
+            <div class="flex gap-2 max-w-2xl mx-auto">
+                <input
+                    id="searchInput"
+                    type="text"
+                    placeholder="Search images... (e.g. mountains, Nepal, farming)"
+                    class="flex-1 px-4 py-3 border border-gray-300 rounded-lg
+                           text-gray-700 focus:outline-none focus:ring-2
+                           focus:ring-blue-500 focus:border-transparent
+                           transition duration-300"
+                />
+                <button
+                    id="searchBtn"
+                    class="bg-blue-600 text-white px-6 py-3 rounded-lg
+                           font-semibold hover:bg-blue-700 active:scale-95
+                           transition duration-300">
+                    Search
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-6xl mx-auto px-4 py-8">
+
+        <!-- Empty State -->
+        <div id="emptyState"
+             class="flex flex-col justify-center items-center py-24 gap-4">
+            <span class="text-8xl">🖼️</span>
+            <p class="text-gray-400 text-xl font-semibold">
+                Search for images above
+            </p>
+            <p class="text-gray-300 text-sm">
+                Powered by Unsplash
+            </p>
+        </div>
+
+        <!-- Error Message -->
+        <div id="errorMsg"
+             class="hidden flex flex-col items-center justify-center py-24 gap-4">
+            <span class="text-8xl">😕</span>
+            <p class="text-red-400 text-xl font-semibold">
+                Something went wrong!
+            </p>
+            <p id="errorText" class="text-gray-400 text-sm">
+                Please try again
+            </p>
+        </div>
+
+        <!-- No Results -->
+        <div id="noResults"
+             class="hidden flex flex-col items-center justify-center py-24 gap-4">
+            <span class="text-8xl">🔎</span>
+            <p class="text-gray-400 text-xl font-semibold">
+                No images found
+            </p>
+            <p class="text-gray-300 text-sm">
+                Try a different search term
+            </p>
+        </div>
+
+        <!-- Results Info -->
+        <div id="resultsInfo" class="hidden mb-4">
+            <p class="text-gray-500 text-sm">
+                Showing results for:
+                <span id="searchTerm" class="font-semibold text-blue-600"></span>
+                <span id="totalResults" class="text-gray-400 ml-2"></span>
+            </p>
+        </div>
+
+        <!-- Image Grid -->
+        <div id="imageGrid"
+             class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        </div>
+
+        <!-- Spinner -->
+        <div id="spinner" class="hidden flex justify-center items-center py-12">
+            <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent
+                        rounded-full animate-spin">
+            </div>
+        </div>
+
+        <!-- Load More -->
+        <div class="flex justify-center mt-8">
+            <button
+                id="loadMoreBtn"
+                class="hidden bg-white text-blue-600 border-2 border-blue-600
+                       px-8 py-3 rounded-lg font-semibold hover:bg-blue-600
+                       hover:text-white active:scale-95 transition duration-300
+                       shadow-md">
+                Load More
+            </button>
+        </div>
+
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
