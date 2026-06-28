@@ -1,78 +1,73 @@
-// ─── State ────────────────────────────────────────────────
-let tasks         = [];
+let tasks = [];
 let currentFilter = "all";
 
-// ─── Element Selection ────────────────────────────────────
-const taskInput      = document.querySelector("#taskInput");
-const addBtn         = document.querySelector("#addBtn");
-const taskList       = document.querySelector("#taskList");
-const emptyState     = document.querySelector("#emptyState");
-const inputError     = document.querySelector("#inputError");
-const clearDoneBtn   = document.querySelector("#clearDoneBtn");
-const taskCounter    = document.querySelector("#taskCounter");
+const taskInput = document.querySelector("#taskInput");
+const taskCounter = document.querySelector("#taskCounter");
+const addBtn = document.querySelector("#addBtn");
+const inputError = document.querySelector("#inputError");
+const taskList = document.querySelector("#taskList");
+const emptyState = document.querySelector("#emptyState");
 const completedCount = document.querySelector("#completedCount");
-const totalCount     = document.querySelector("#totalCount");
-const filterBtns     = document.querySelectorAll(".filter-btn");
+const totalCount = document.querySelector("#totalCount");
+const clearDoneBtn = document.querySelector("#clearDoneBtn");
+const filterBtns = document.querySelectorAll(".filter-btn");
 
-// ─── LocalStorage ─────────────────────────────────────────
-function saveTasks() {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-}
+const saveTasks = () => {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+};
 
-function loadTasks() {
-    const saved = localStorage.getItem("tasks");
-    tasks = saved ? JSON.parse(saved) : [];
-}
+const loadTasks = () => {
+  const saved = localStorage.getItem("tasks");
+  tasks = saved ? JSON.parse(saved) : [];
+};
 
-// ─── Get Filtered Tasks ───────────────────────────────────
-function getFilteredTasks() {
-    if (currentFilter === "active") {
-        return tasks.filter(task => !task.completed);
-    }
-    if (currentFilter === "completed") {
-        return tasks.filter(task => task.completed);
-    }
-    return tasks; // all
-}
+const getFilteredTasks = () => {
+  if (currentFilter === "completed")
+    return tasks.filter((task) => task.completed);
+  if (currentFilter === "active")
+    return tasks.filter((task) => !task.completed);
 
-// ─── Update Counter ───────────────────────────────────────
-function updateCounter() {
-    const remaining  = tasks.filter(task => !task.completed).length;
-    const completed  = tasks.filter(task =>  task.completed).length;
-    const total      = tasks.length;
+  return tasks;
+};
 
-    taskCounter.textContent    = remaining;
-    completedCount.textContent = completed;
-    totalCount.textContent     = total;
-}
+const updateCounter = () => {
+  const remainingTasks = tasks.filter((task) => !task.completed).length;
+  const completedTasks = tasks.filter((task) => task.completed).length;
+  const totalTasks = tasks.length;
 
-// ─── Render Tasks ─────────────────────────────────────────
-function renderTasks() {
-    const filtered = getFilteredTasks();
+  taskCounter.textContent = remainingTasks;
+  totalCount.textContent = totalTasks;
+  completedCount.textContent = completedTasks;
+};
 
-    // clear list
-    taskList.innerHTML = "";
+const renderTasks = () => {
+  const filteredTask = getFilteredTasks();
 
-    // show/hide empty state
-    if (filtered.length === 0) {
-        emptyState.classList.remove("hidden");
-        taskList.classList.add("hidden");
-    } else {
-        emptyState.classList.add("hidden");
-        taskList.classList.remove("hidden");
-    }
+  taskList.innerHTML = "";
 
-    // render each task
-    filtered.forEach(task => {
-        const taskEl = document.createElement("div");
-        taskEl.classList.add(
-            "flex", "items-center", "justify-between",
-            "p-3", "rounded-lg", "border", "group",
-            task.completed ? "bg-gray-50" : "bg-white",
-            task.completed ? "border-gray-100" : "border-gray-200"
-        );
+  if (filteredTask.length === 0) {
+    emptyState.classList.remove("hidden");
+    taskList.classList.add("hidden");
+  } else {
+    emptyState.classList.add("hidden");
+    taskList.classList.remove("hidden");
+  }
 
-        taskEl.innerHTML = `
+  filteredTask.forEach((task) => {
+    const taskEl = document.createElement("div");
+    taskEl.classList.add(
+      "flex",
+      "items-center",
+      "justify-between",
+      "p-3",
+      "rounded-lg",
+      "border",
+      "group",
+      task.completed ? "bg-gray-50" : "bg-white",
+      task.completed ? "border-gray-100" : "border-gray-200",
+    );
+
+    taskEl.innerHTML = `
             <!-- Checkbox + Text -->
             <div class="flex items-center gap-3 flex-1 min-w-0">
 
@@ -81,21 +76,27 @@ function renderTasks() {
                     data-id="${task.id}"
                     class="toggle-btn flex-shrink-0 w-6 h-6 rounded-full border-2
                            flex items-center justify-center transition duration-300
-                           ${task.completed
+                           ${
+                             task.completed
                                ? "bg-blue-600 border-blue-600 text-white"
                                : "border-gray-300 hover:border-blue-600"
                            }">
                     ${task.completed ? "✓" : ""}
                 </button>
-
+                
                 <!-- Task Text -->
-                <span class="text-sm flex-1 truncate transition duration-300
-                             ${task.completed
-                                 ? "line-through text-gray-400"
-                                 : "text-gray-700"
-                             }">
-                    ${task.text}
-                </span>
+             <div class="flex flex-1 ">
+    <p class="text-sm ${
+      task.completed ? "line-through text-gray-400" : "font-semibold text-gray-600"
+    }">
+        ${task.text}
+    </p>
+
+    <p class="text-xs text-black-400 ml-3 border border-blue-400 p-1">
+        ${task.createdAt}
+    </p>
+</div>
+                
 
             </div>
 
@@ -109,141 +110,136 @@ function renderTasks() {
             </button>
         `;
 
-        taskList.appendChild(taskEl);
-    });
+    taskList.appendChild(taskEl);
+  });
 
-    updateCounter();
-}
+  updateCounter();
+};
 
-// ─── Add Task ─────────────────────────────────────────────
-function addTask() {
-    const text = taskInput.value.trim();
+const addTask = () => {
+  const text = taskInput.value.trim();
 
-    // validate
-    if (text === "") {
-        inputError.classList.remove("hidden");
-        taskInput.classList.add("ring-2", "ring-red-400");
-        setTimeout(() => {
-            inputError.classList.add("hidden");
-            taskInput.classList.remove("ring-2", "ring-red-400");
-        }, 1500);
-        return;
+  if (text === "") {
+    inputError.classList.remove("hidden");
+    taskInput.classList.add("ring-2", "ring-red-400");
+
+    setTimeout(() => {
+      taskInput.classList.remove("ring-2", "ring-red-400");
+      inputError.classList.add("hidden");
+    }, 1000);
+    return;
+  }
+
+  const newTask = {
+    id: Date.now(),
+    text: text,
+    completed: false,
+    createdAt: new Date().toLocaleString(),
+  };
+
+  tasks.push(newTask);
+  saveTasks();
+  renderTasks();
+
+  taskInput.value = "";
+  taskInput.focus();
+};
+
+const toggleTask = (taskId) => {
+  for (let i = 0; i < tasks.length; i++) {
+    if (tasks[i].id === taskId) {
+      tasks[i].completed = !tasks[i].completed;
     }
+  }
 
-    // create task
-    const newTask = {
-        id:        Date.now(),
-        text:      text,
-        completed: false
-    };
+  saveTasks();
+  renderTasks();
+};
 
-    // add to array
-    tasks.push(newTask);
-    saveTasks();
-    renderTasks();
+const deleteTask = (taskId) => {
+  tasks = tasks.filter((task) => task.id !== taskId);
+  saveTasks();
+  renderTasks();
+};
 
-    // clear input
-    taskInput.value = "";
-    taskInput.focus();
-}
+const clearCompleted = () => {
+  if (!tasks.some((task) => task.completed)) {
+    clearDoneBtn.classList.add("bg-blue-700");
+    clearDoneBtn.textContent = "Nothing to clear!";
 
-// ─── Toggle Task ──────────────────────────────────────────
-function toggleTask(id) {
-    tasks = tasks.map(task =>
-        task.id === id
-            ? { ...task, completed: !task.completed }
-            : task
-    );
-    saveTasks();
-    renderTasks();
-}
+    setTimeout(() => {
+      clearDoneBtn.classList.remove("bg-blue-700");
+      clearDoneBtn.textContent = "Clear Completed";
+    }, 1000);
 
-// ─── Delete Task ──────────────────────────────────────────
-function deleteTask(id) {
-    tasks = tasks.filter(task => task.id !== id);
-    saveTasks();
-    renderTasks();
-}
+    return;
+  }
 
-// ─── Clear Completed ──────────────────────────────────────
-function clearCompleted() {
-    // nothing to clear
-    if (!tasks.some(task => task.completed)) {
-        clearDoneBtn.textContent = "Nothing to clear!";
-        setTimeout(() => {
-            clearDoneBtn.textContent = "Clear Completed";
-        }, 1500);
-        return;
+  tasks = tasks.filter((task) => !task.completed);
+  saveTasks();
+  renderTasks();
+};
+
+const updateFilterBtn = (activeFilter) => {
+  filterBtns.forEach((btn) => {
+    const isSelected = btn.dataset.filter === activeFilter;
+
+    if (isSelected) {
+      btn.classList.add("bg-blue-600", "text-white");
+      btn.classList.remove(
+        "border-2",
+        "border-gray-200",
+        "text-gray-500",
+        "hover:border-blue-600",
+        "hover:text-blue-600",
+      );
+    } else {
+      btn.classList.remove("bg-blue-600", "text-white");
+      btn.classList.add(
+        "border-2",
+        "border-gray-200",
+        "text-gray-500",
+        "hover:border-blue-600",
+        "hover:text-blue-600",
+      );
     }
+  });
+};
 
-    tasks = tasks.filter(task => !task.completed);
-    saveTasks();
-    renderTasks();
-}
-
-// ─── Update Active Filter Button ──────────────────────────
-function updateFilterBtns(activeFilter) {
-    filterBtns.forEach(btn => {
-        const isActive = btn.dataset.filter === activeFilter;
-
-        if (isActive) {
-            btn.classList.add("bg-blue-600", "text-white");
-            btn.classList.remove(
-                "border-2", "border-gray-200",
-                "text-gray-500", "hover:border-blue-600",
-                "hover:text-blue-600"
-            );
-        } else {
-            btn.classList.remove("bg-blue-600", "text-white");
-            btn.classList.add(
-                "border-2", "border-gray-200",
-                "text-gray-500", "hover:border-blue-600",
-                "hover:text-blue-600"
-            );
-        }
-    });
-}
-
-// ─── Event Listeners ──────────────────────────────────────
-
-// add button click
 addBtn.addEventListener("click", addTask);
 
-// Enter key
 taskInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") addTask();
+  if (e.key === "Enter") {
+    addTask();
+  }
 });
 
-// task list — event delegation for toggle and delete
 taskList.addEventListener("click", (e) => {
-    // find closest button with data-id
-    const btn = e.target.closest("[data-id]");
-    if (!btn) return;
+  const btn = e.target.closest("[data-id]");
 
-    const id = Number(btn.dataset.id);
+  if (!btn) return;
 
-    if (btn.classList.contains("toggle-btn")) {
-        toggleTask(id);
-    }
+  const id = Number(btn.dataset.id);
 
-    if (btn.classList.contains("delete-btn")) {
-        deleteTask(id);
-    }
+  if (btn.classList.contains("toggle-btn")) {
+    toggleTask(id);
+  }
+
+  if (btn.classList.contains("delete-btn")) {
+    deleteTask(id);
+  }
 });
 
-// filter buttons
-filterBtns.forEach(btn => {
-    btn.addEventListener("click", () => {
-        currentFilter = btn.dataset.filter;
-        updateFilterBtns(currentFilter);
-        renderTasks();
-    });
+filterBtns.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    currentFilter = btn.dataset.filter;
+    updateFilterBtn(currentFilter);
+    renderTasks();
+  });
 });
 
-// clear completed
 clearDoneBtn.addEventListener("click", clearCompleted);
 
-// ─── Initialize ───────────────────────────────────────────
 loadTasks();
 renderTasks();
-updateFilterBtns("all");
+updateFilterBtn("all");
